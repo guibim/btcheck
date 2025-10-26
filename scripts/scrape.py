@@ -1,3 +1,4 @@
+# scripts/scrape.py
 import hashlib
 import os
 from datetime import datetime, timedelta
@@ -16,21 +17,28 @@ SOURCES = [
     {"name": "Portal do Bitcoin", "url": "https://portaldobitcoin.uol.com.br/feed/"},
 ]
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+# URL do banco (OWNER) vem do Secret do GitHub Actions: DATABASE_URL
+RAW_DB_URL = os.environ.get("DATABASE_URL", "").strip()
+if not RAW_DB_URL:
+    raise SystemExit("DATABASE_URL não definida (configure em Settings → Secrets → Actions).")
+
+# Garante sslmode=require no Neon (se faltar)
+DATABASE_URL = (
+    RAW_DB_URL if "sslmode=" in RAW_DB_URL
+    else (RAW_DB_URL + ("&sslmode=require" if "?" in RAW_DB_URL else "?sslmode=require"))
+)
+
 MAX_DAILY = int(os.environ.get("MAX_DAILY_INSERTS", "10"))
 TZ = ZoneInfo(os.environ.get("TZ", "America/Sao_Paulo"))
 
 # ===================== Funções auxiliares =====================
-
 def url_hash(url: str) -> str:
     """Gera hash SHA-256 da URL para evitar duplicações."""
     return hashlib.sha256(url.strip().encode()).hexdigest()
 
-
 def clean_html(html: str | None) -> str:
     """Remove tags HTML e deixa apenas texto limpo."""
     return BeautifulSoup(html or "", "html.parser").get_text().strip()
-
 
 def parse_feed(name: str, url: str) -> list[dict]:
     """Lê um feed RSS e retorna lista de notícias formatadas."""
@@ -81,7 +89,6 @@ def parse_feed(name: str, url: str) -> list[dict]:
 
     return items
 
-
 def get_today_bounds_sao_paulo() -> tuple[datetime, datetime]:
     """Retorna limites de início e fim do dia (fuso São Paulo), convertidos para UTC."""
     now_sp = datetime.now(TZ)
@@ -90,10 +97,7 @@ def get_today_bounds_sao_paulo() -> tuple[datetime, datetime]:
     return (start.astimezone(ZoneInfo("UTC")), end.astimezone(ZoneInfo("UTC")))
 
 # ===================== Execução principal =====================
-
 def main():
-    assert DATABASE_URL, "DATABASE_URL não definida"
-
     all_items: list[dict] = []
     for s in SOURCES:
         all_items.extend(parse_feed(s["name"], s["url"]))
@@ -108,8 +112,9 @@ def main():
     # Ordena por data
     all_items.sort(key=lambda x: x["published_at"], reverse=True)
 
+    # Conecta no banco (owner)
     with psycopg.connect(DATABASE_URL) as conn:
-        # Cria tabela se não existir
+        # Cria tabela e índice se não existirem
         conn.execute("""
         CREATE TABLE IF NOT EXISTS articles (
           id TEXT PRIMARY KEY,
@@ -124,12 +129,10 @@ def main():
         CREATE INDEX IF NOT EXISTS idx_articles_published_at ON articles (published_at DESC);
         """)
 
+        # Limite diário (baseado no dia de São Paulo)
         start_utc, end_utc = get_today_bounds_sao_paulo()
         cur = conn.execute(
-            """
-            SELECT COUNT(*) FROM articles
-            WHERE published_at >= %s AND published_at < %s
-            """,
+            "SELECT COUNT(*) FROM articles WHERE published_at >= %s AND published_at < %s",
             (start_utc, end_utc)
         )
         already_today = cur.fetchone()[0]
@@ -138,6 +141,7 @@ def main():
             print(f"Nada a inserir: limite diário ({MAX_DAILY}) já atingido.")
             return
 
+        # Evita duplicatas por id (hash da URL)
         ids = tuple(set([it["id"] for it in all_items]))
         existing = set()
         if ids:
@@ -147,6 +151,7 @@ def main():
                 cur = conn.execute(f"SELECT id FROM articles WHERE id IN ({placeholders})", batch)
                 existing.update([row[0] for row in cur.fetchall()])
 
+        # Mantém apenas novos e dentro do dia corrente (TZ SP)
         candidates = [
             it for it in all_items
             if (it["id"] not in existing) and (start_utc <= it["published_at"] < end_utc)
@@ -157,6 +162,7 @@ def main():
             print("Sem itens novos dentro do período de hoje.")
             return
 
+        # Inserção em lote
         with conn.cursor() as cur:
             cur.executemany(
                 """
@@ -168,7 +174,6 @@ def main():
             )
 
         print(f"Inseridos {len(to_insert)} novos artigos hoje (limite diário {MAX_DAILY}).")
-
 
 if __name__ == "__main__":
     main()

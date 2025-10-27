@@ -33,7 +33,7 @@ jobs:
           NEWS_LIMIT: ${{ env.NEWS_LIMIT }}
         run: python scripts/build_json.py
 
-      - name: Build BTC price (USD)
+      - name: Build BTC price (USD+BRL)
         run: python scripts/get_btc_price.py
 
       - uses: actions/upload-pages-artifact@v3

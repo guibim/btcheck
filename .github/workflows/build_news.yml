@@ -6,6 +6,10 @@ on:
     - cron: "10 22 * * *"   # 19:10 BRT
   workflow_dispatch:
 
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
 jobs:
   build-news:
     runs-on: ubuntu-latest
@@ -32,8 +36,17 @@ jobs:
           NEWS_LIMIT: ${{ env.NEWS_LIMIT }}
         run: python scripts/build_json.py
 
-      - uses: actions/upload-pages-artifact@v3
+      # garante que btc_price.json estará presente no deploy
+      - name: Fetch latest btc_price.json (carry-over)
+        run: |
+          mkdir -p public
+          curl -fsSL https://guibim.github.io/btcheck/btc_price.json -o public/btc_price.json \
+            || echo '{"updated_at":"","source":"coingecko","prices":{"BTC_USD":0,"BTC_BRL":0}}' > public/btc_price.json
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: public
 
-      - uses: actions/deploy-pages@v4
+      - name: Deploy to Pages
+        uses: actions/deploy-pages@v4

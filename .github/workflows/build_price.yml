@@ -2,8 +2,12 @@ name: Build BTC Price & Publish
 
 on:
   schedule:
-    - cron: "*/10 * * * *"   # a cada 10 minutos (UTC)
+    - cron: "*/10 * * * *"   # a cada 10 min (UTC)
   workflow_dispatch:
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
 
 jobs:
   build-price:
@@ -12,8 +16,6 @@ jobs:
       contents: write
       pages: write
       id-token: write
-    env:
-      TZ: America/Sao_Paulo
     steps:
       - uses: actions/checkout@v4
 
@@ -24,11 +26,20 @@ jobs:
       - name: Install deps
         run: pip install requests==2.32.3
 
+      # garante que news.json estará presente no deploy
+      - name: Fetch latest news.json (carry-over)
+        run: |
+          mkdir -p public
+          curl -fsSL https://guibim.github.io/btcheck/news.json -o public/news.json \
+            || echo "[]" > public/news.json
+
       - name: Build BTC price (USD+BRL)
         run: python scripts/get_btc_price.py
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: public
 
-      - uses: actions/deploy-pages@v4
+      - name: Deploy to Pages
+        uses: actions/deploy-pages@v4

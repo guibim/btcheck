@@ -1,92 +1,58 @@
-# 🟠 btcheck — Bitcoin News & Price Feed
+# 📰 BTCheck — Bitcoin News & Price Feed
 
-**PT-BR:** Backend e automação para coleta de notícias e cotação do Bitcoin em português.  
-**EN:** Backend and automation to fetch Bitcoin news (in Portuguese) and price data.
-
----
-
-## 🌍 Descrição (PT-BR)
-
-**btcheck** é um projeto *open-source* que coleta automaticamente as últimas notícias sobre **Bitcoin** em português e a cotação atual da moeda, disponibilizando tudo em formato **JSON público** — ideal para ser consumido por websites, como o front-end desenvolvido no **Loveable**.
+> **PT-BR:** Plataforma open-source que coleta automaticamente as últimas notícias sobre Bitcoin em português e exibe a cotação atual da moeda.  
+> **EN:** Open-source project that fetches the latest Bitcoin news (in Portuguese) and live BTC/USD price data.
 
 ---
 
-## 🔎 Funcionalidades Principais
+## 🌍 Descrição do Projeto
 
-### 📰 Coleta Automática de Notícias
-Realizada duas vezes por dia, a partir de fontes **RSS confiáveis**:
+O **BTCheck** integra *scraping*, APIs públicas e automações para reunir, organizar e disponibilizar informações sobre o mercado Bitcoin.  
+As notícias são coletadas de fontes confiáveis, armazenadas em banco de dados PostgreSQL (NeonDB) e publicadas em formato JSON público, sendo consumidas pelo front-end hospedado na [Lovable.app](https://btcheck.lovable.app/).
 
-- [Livecoins](https://www.livecoins.com.br/)
-- [Cointelegraph Brasil](https://br.cointelegraph.com/)
-- [Portal do Bitcoin](https://portaldobitcoin.uol.com.br/)
+**Principais componentes:**
+- `scrape.py` → coleta notícias de fontes RSS e salva no banco de dados.  
+- `get_btc_price.py` → obtém a cotação do Bitcoin em USD e BRL via API [CoinGecko](https://www.coingecko.com/).  
+- `build_json.py` → gera o arquivo `news.json` lido pelo front-end (pode ser reutilizado em outros projetos).  
+- `api_by_date/` → API propria que consulta o banco de dados para retornar notícias de datas anteriores e cotação histórica via API da Binance.  
+---
 
-### 💰 Cotação BTC/USD
-Cotação atual do Bitcoin em **dólares (USD)** obtida via [CoinGecko API](https://www.coingecko.com/).
-
-### 💾 Banco de Dados
-Armazenamento das notícias em **PostgreSQL (Neon DB)**.
-
-### ⚙️ Publicação Automatizada
-Processo automatizado com **GitHub Actions**, que gera e publica:
-- `news.json` — lista de notícias
-- `btc_price.json` — cotação atual
-
-### 🌐 Integração Simples com o Front-end
-Integração com **Loveable**, via chamadas `fetch()` aos arquivos JSON hospedados em:
-- Em processo de alteração
+## ✅ Concluído
+| Data | Tarefa |
+|------|--------|
+| 27/10 | 💡 Aba “Apoie o Projeto” — sistema de doação via Lightning Network |
+| 27/10 | 🔗 Adicionado créditos no rodapé |
+| 27/10 | 💰 Conversor BTC → USD / BRL adicionado na seção de cotação |
+| 27/10 | ⚙️ Ajuste de chamadas da API CoinGecko (30/dia distribuídas em 24h) |
+| 28/10 | 🗓️ Histórico de Notícias — exibição por data específica (API `/by-date`) |
+| 28/10 | 📰 Remoção da fonte InfoMoney Cripto; manutenção da Exame Cripto |
+| 28/10 | 📄 Organização no Miro, revisão do README e Documentação geral do projeto
 
 ---
 
-## 🇺🇸 Description (EN)
-
-**btcheck** is an open-source project that automatically collects the latest **Bitcoin-related news** (in Portuguese) and the current **BTC/USD price**, exposing both as public **JSON files** — ideal for integration with front-ends like **Loveable**.
-
----
-
-## 🔎 Main Features
-
-### 📰 Automated News Collection
-Runs twice a day, fetching from reliable RSS sources:
-- InfoMoney Cripto  
-- Exame Cripto  
-- Livecoins  
-- Cointelegraph Brasil  
-- Portal do Bitcoin  
-
-### 💰 Bitcoin Price (USD)
-Fetched from **CoinGecko API**.
-
-### 💾 Database
-News stored in **PostgreSQL (Neon DB)**.
-
-### ⚙️ Automated Publishing
-Using **GitHub Actions** to generate:
-- `news.json` — latest news  
-- `btc_price.json` — current BTC price  
-
-### 🌐 Front-end Integration
-Easily integrated with **Loveable** via simple `fetch()` calls.
+## ⚙️ Tecnologias Utilizadas
+- **Backend:** Python · FastAPI · PostgreSQL (NeonDB)  
+- **Frontend:** React · TypeScript · TailwindCSS · ShadCN/UI  
+- **Automação:** GitHub Actions  
+- **APIs:** CoinGecko · Binance · RSS Feeds (Exame Cripto, Livecoins, etc.)  
+- **Infraestrutura:** Lovable.app Hosting  
 
 ---
 
-## 🧩 Roadmap — btcheck
-
-### 🎯 Fase 1 — Próximos Passos
-- 💡 **Aba “Apoie o Projeto”** — Sistema de doação via **Lightning Network**.  
-- 🗓️ **Histórico de Notícias** — Exibição de notícias passadas por data específica.  
-- 🔎 **Filtro de Pesquisa** — Busca por palavra-chave e data.
-
-### 🚀 Fase 2 — Aprimoramentos
-- 🏷️ **Categorias de Notícias** — Classificação por *mercado*, *mineração*, *regulação*, *inovação*, etc.  
-- 📈 **Histórico de Preços BTC/USD** — Gráfico de variação baseado no JSON atualizado duas vezes ao dia.
-
-### 🌎 Fase 3 — Expansão
-- 🌍 **Internacionalização (EN)** — Suporte multilíngue (PT-BR / EN), com detecção automática e alternância manual.
+## 💡 Ideias Futuras
+- 🕓 Agendamento de publicações automáticas via GitHub Actions  
+- 📊 Painel estatístico das fontes e engajamento  
+- 🔔 Notificações push de novas notícias  
+- 📬 Integração com newsletter via API  
 
 ---
 
-## 🧑‍💻 Autor
-
+## 👨‍💻 Desenvolvido por
 **Guilherme Bim**  
-Projeto: **btcheck**  
-[GitHub @guibim](https://github.com/guibim)
+🔗 [github.com/guibim](https://github.com/guibim)  
+🚀 Projeto hospedado em [btcheck.lovable.app](https://btcheck.lovable.app/)
+
+---
+
+## 📄 Licença
+Distribuído sob a licença MIT.

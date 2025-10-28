@@ -15,8 +15,7 @@
 
 ### 📰 Coleta Automática de Notícias
 Realizada duas vezes por dia, a partir de fontes **RSS confiáveis**:
-- [InfoMoney Cripto](https://www.infomoney.com.br/criptomoedas/)
-- [Exame Cripto](https://exame.com/cripto/)
+
 - [Livecoins](https://www.livecoins.com.br/)
 - [Cointelegraph Brasil](https://br.cointelegraph.com/)
 - [Portal do Bitcoin](https://portaldobitcoin.uol.com.br/)

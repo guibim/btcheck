@@ -10,8 +10,6 @@ import psycopg
 
 # ===================== Configurações =====================
 SOURCES = [
-    {"name": "InfoMoney Cripto", "url": "https://www.infomoney.com.br/crypto/feed/"},
-    {"name": "Exame Cripto", "url": "https://exame.com/cripto/feed/"},
     {"name": "Livecoins", "url": "https://livecoins.com.br/feed/"},
     {"name": "Cointelegraph Brasil", "url": "https://br.cointelegraph.com/rss"},
     {"name": "Portal do Bitcoin", "url": "https://portaldobitcoin.uol.com.br/feed/"},
@@ -177,3 +175,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

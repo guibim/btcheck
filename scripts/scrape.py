@@ -82,7 +82,6 @@ def parse_feed(name: str, url: str) -> list[dict]:
             "url": link,
             "summary": summary,
             "published_at": published_at,
-            "image_url": image_url,
         })
 
     return items
@@ -175,4 +174,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

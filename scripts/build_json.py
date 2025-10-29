@@ -32,7 +32,6 @@ QUERY = """
         title,
         url,
         summary,
-        image_url,
         to_char(
             published_at AT TIME ZONE 'America/Sao_Paulo',
             'YYYY-MM-DD"T"HH24:MI:SSOF'
@@ -60,3 +59,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

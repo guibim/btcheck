@@ -31,13 +31,30 @@ serve(async (req) => {
     const btcUsd = priceData.btc_usd;
 
     // Calcular conversões
-    const usd = btcAmount * btcUsd;
-    
-    // Taxa BRL/USD aproximada (pode ser substituída por API real)
-    const usdToBrl = 4.92;
-    const brl = usd * usdToBrl;
+const usd = btcAmount * btcUsd;
 
-    console.log(`Conversão: ${btcAmount} BTC = ${usd} USD = ${brl} BRL`);
+// Buscar taxa de câmbio USD → BRL em tempo real (Frankfurter)
+let usdToBrl = 5.30; // valor padrão caso API falhe
+
+try {
+  const fxRes = await fetch("https://api.frankfurter.app/latest?from=USD&to=BRL");
+  if (fxRes.ok) {
+    const fxData = await fxRes.json();
+    if (fxData?.rates?.BRL) {
+      usdToBrl = fxData.rates.BRL;
+      console.log(`Taxa real USD→BRL obtida: ${usdToBrl} (${fxData.date})`);
+    }
+  } else {
+    console.warn("Falha ao buscar taxa Frankfurter, usando taxa fixa de fallback.");
+  }
+} catch (err) {
+  console.warn("Erro ao conectar à Frankfurter API, usando taxa fixa:", err);
+}
+
+// Converter USD → BRL
+const brl = usd * usdToBrl;
+
+console.log(`Conversão: ${btcAmount} BTC = ${usd.toFixed(2)} USD = ${brl.toFixed(2)} BRL`);
 
     return new Response(
       JSON.stringify({

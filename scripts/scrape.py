@@ -66,15 +66,6 @@ def parse_feed(name: str, url: str) -> list[dict]:
         else:
             published_at = published_at.astimezone(ZoneInfo("UTC"))
 
-        # Extrai imagem (quando disponível)
-        image_url = None
-        content = e.get("content", [])
-        if content:
-            soup = BeautifulSoup(content[0].get("value", ""), "html.parser")
-            img = soup.find("img")
-            if img and img.get("src"):
-                image_url = img["src"]
-
         items.append({
             "id": url_hash(link),
             "source": name,
@@ -120,7 +111,6 @@ def main():
           url TEXT NOT NULL,
           summary TEXT,
           published_at TIMESTAMPTZ NOT NULL,
-          image_url TEXT,
           created_at TIMESTAMPTZ NOT NULL DEFAULT now()
         );
         CREATE INDEX IF NOT EXISTS idx_articles_published_at ON articles (published_at DESC);
@@ -163,8 +153,8 @@ def main():
         with conn.cursor() as cur:
             cur.executemany(
                 """
-                INSERT INTO articles (id, source, title, url, summary, published_at, image_url)
-                VALUES (%(id)s, %(source)s, %(title)s, %(url)s, %(summary)s, %(published_at)s, %(image_url)s)
+                INSERT INTO articles (id, source, title, url, summary, published_at)
+                VALUES (%(id)s, %(source)s, %(title)s, %(url)s, %(summary)s, %(published_at)s)
                 ON CONFLICT (id) DO NOTHING
                 """,
                 to_insert
@@ -174,5 +164,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 

@@ -27,7 +27,7 @@ DATABASE_URL = (
     else (RAW_DB_URL + ("&sslmode=require" if "?" in RAW_DB_URL else "?sslmode=require"))
 )
 
-MAX_DAILY = int(os.environ.get("MAX_DAILY_INSERTS", "10"))
+MAX_DAILY = int(os.environ.get("MAX_DAILY_INSERTS", "20"))
 TZ = ZoneInfo(os.environ.get("TZ", "America/Sao_Paulo"))
 
 # ===================== Funções auxiliares =====================
@@ -165,6 +165,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 

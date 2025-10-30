@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS articles (
     url TEXT NOT NULL,
     summary TEXT,
     published_at TIMESTAMPTZ NOT NULL,
-    image_url TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -36,3 +35,4 @@ GRANT USAGE ON SCHEMA public TO btcheck_reader;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO btcheck_reader;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
     GRANT SELECT ON TABLES TO btcheck_reader;
+

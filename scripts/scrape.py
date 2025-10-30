@@ -13,14 +13,15 @@ SOURCES = [
     {"name": "Livecoins", "url": "https://livecoins.com.br/feed/"},
     {"name": "Cointelegraph Brasil", "url": "https://br.cointelegraph.com/rss"},
     {"name": "Portal do Bitcoin", "url": "https://portaldobitcoin.uol.com.br/feed/"},
+    {"name": "Bitcoinist", "url": "https://bitcoinist.com/feed/"}, #add 30-10-25
 ]
 
-# URL do banco (OWNER) vem do Secret do GitHub Actions: DATABASE_URL
+
 RAW_DB_URL = os.environ.get("DATABASE_URL", "").strip()
 if not RAW_DB_URL:
     raise SystemExit("DATABASE_URL não definida (configure em Settings → Secrets → Actions).")
 
-# Garante sslmode=require no Neon (se faltar)
+
 DATABASE_URL = (
     RAW_DB_URL if "sslmode=" in RAW_DB_URL
     else (RAW_DB_URL + ("&sslmode=require" if "?" in RAW_DB_URL else "?sslmode=require"))
@@ -164,6 +165,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 

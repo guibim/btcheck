@@ -12,6 +12,7 @@ As notícias são coletadas por *scripts* em Python, armazenadas em um banco de 
 
 O projeto é **pessoal e em constante aprimoramento**, atualmente em processo de migração de host e expansão de funcionalidades, incluindo o desenvolvimento de uma **newsletter semanal** com as principais notícias do Bitcoin.
 
+🔗 [Repositório para testes E2E do projeto](https://github.com/guibim/labs-robot/tree/main/btcheck-tests)
 ---
 
 ## ⚙️ Estrutura Principal

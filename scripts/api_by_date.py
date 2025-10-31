@@ -36,7 +36,7 @@ class Noticia(BaseModel):
     url: str
     summary: str | None = None
     image_url: str | None = None
-    published_at: str # Já vem formatado do SQL
+    published_at: str 
 
 class NoticiaResponse(BaseModel):
     generated_at: datetime
@@ -47,10 +47,9 @@ class NoticiaResponse(BaseModel):
 
 app = FastAPI(title="BTCheck API (Buscas Históricas)")
 
-# Adiciona CORS para permitir que seu front-end acesse a API
+# Adiciona CORS
 app.add_middleware(
     CORSMiddleware,
-    # Em produção, mude "*" para o seu domínio (ex: "https://seu-site.github.io")
     allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["GET"],

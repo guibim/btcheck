@@ -1,8 +1,10 @@
 # scripts/scrape.py
 import hashlib
+import math
 import os
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
+
 from dateutil import parser as dateparser
 import feedparser
 from bs4 import BeautifulSoup
@@ -16,7 +18,6 @@ SOURCES = [
    # {"name": "Bitcoinist", "url": "https://bitcoinist.com/feed/"}, #add 30-10-25 #disabled 04-11-25
 ]
 
-
 RAW_DB_URL = os.environ.get("DATABASE_URL", "").strip()
 if not RAW_DB_URL:
     raise SystemExit("DATABASE_URL não definida (configure em Settings → Secrets → Actions).")
@@ -29,6 +30,28 @@ DATABASE_URL = (
 
 MAX_DAILY = int(os.environ.get("MAX_DAILY_INSERTS", "20"))
 TZ = ZoneInfo(os.environ.get("TZ", "America/Sao_Paulo"))
+
+KEYWORD_WEIGHTS: dict[str, float] = {
+    "bitcoin": 3.0,
+    "btc": 2.5,
+    "blockchain": 1.5,
+    "etf": 1.2,
+    "mercado": 0.8,
+    "regulacao": 0.8,
+    "regulação": 0.8,
+    "mineracao": 0.6,
+    "mineração": 0.6,
+    "halving": 0.6,
+}
+
+SOURCE_WEIGHTS: dict[str, float] = {
+    "Cointelegraph Brasil": 1.0,
+    "Portal do Bitcoin": 0.8,
+    "Livecoins": 0.6,
+}
+
+RECENCY_HALFLIFE_HOURS = 36
+RECENCY_WEIGHT = 2.0
 
 # ===================== Funções auxiliares =====================
 def url_hash(url: str) -> str:
@@ -78,6 +101,30 @@ def parse_feed(name: str, url: str) -> list[dict]:
 
     return items
 
+def compute_relevance(item: dict) -> float:
+    """Calcula um score simples de relevância com base em palavras-chave, fonte e frescor."""
+    base_text = f"{item.get('title', '')} {item.get('summary', '')}".lower()
+    keyword_score = 0.0
+    for kw, weight in KEYWORD_WEIGHTS.items():
+        occurrences = base_text.count(kw)
+        if occurrences:
+            keyword_score += occurrences * weight
+
+    source_score = SOURCE_WEIGHTS.get(item.get("source", ""), 0.0)
+
+    published_at = item.get("published_at")
+    if isinstance(published_at, datetime):
+        elapsed_hours = max(
+            0.0,
+            (datetime.now(ZoneInfo("UTC")) - published_at.astimezone(ZoneInfo("UTC"))).total_seconds() / 3600,
+        )
+        recency_score = math.exp(-elapsed_hours / RECENCY_HALFLIFE_HOURS) * RECENCY_WEIGHT
+    else:
+        recency_score = 0.0
+
+    total = keyword_score + source_score + recency_score
+    return round(total, 4)
+
 def get_today_bounds_sao_paulo() -> tuple[datetime, datetime]:
     """Retorna limites de início e fim do dia (fuso São Paulo), convertidos para UTC."""
     now_sp = datetime.now(TZ)
@@ -112,10 +159,14 @@ def main():
           url TEXT NOT NULL,
           summary TEXT,
           published_at TIMESTAMPTZ NOT NULL,
+          relevance_score REAL NOT NULL DEFAULT 0,
           created_at TIMESTAMPTZ NOT NULL DEFAULT now()
         );
         CREATE INDEX IF NOT EXISTS idx_articles_published_at ON articles (published_at DESC);
         """)
+        conn.execute(
+            "ALTER TABLE articles ADD COLUMN IF NOT EXISTS relevance_score REAL NOT NULL DEFAULT 0;"
+        )
 
         # Limite diário (baseado no dia de São Paulo)
         start_utc, end_utc = get_today_bounds_sao_paulo()
@@ -144,6 +195,8 @@ def main():
             it for it in all_items
             if (it["id"] not in existing) and (start_utc <= it["published_at"] < end_utc)
         ]
+        for item in candidates:
+            item["relevance_score"] = compute_relevance(item)
         to_insert = candidates[:remaining]
 
         if not to_insert:
@@ -154,8 +207,8 @@ def main():
         with conn.cursor() as cur:
             cur.executemany(
                 """
-                INSERT INTO articles (id, source, title, url, summary, published_at)
-                VALUES (%(id)s, %(source)s, %(title)s, %(url)s, %(summary)s, %(published_at)s)
+                INSERT INTO articles (id, source, title, url, summary, published_at, relevance_score)
+                VALUES (%(id)s, %(source)s, %(title)s, %(url)s, %(summary)s, %(published_at)s, %(relevance_score)s)
                 ON CONFLICT (id) DO NOTHING
                 """,
                 to_insert

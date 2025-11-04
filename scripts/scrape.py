@@ -13,7 +13,7 @@ SOURCES = [
     {"name": "Livecoins", "url": "https://livecoins.com.br/feed/"},
     {"name": "Cointelegraph Brasil", "url": "https://br.cointelegraph.com/rss"},
     {"name": "Portal do Bitcoin", "url": "https://portaldobitcoin.uol.com.br/feed/"},
-    {"name": "Bitcoinist", "url": "https://bitcoinist.com/feed/"}, #add 30-10-25
+   # {"name": "Bitcoinist", "url": "https://bitcoinist.com/feed/"}, #add 30-10-25 #disabled 04-11-25
 ]
 
 
@@ -165,6 +165,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 

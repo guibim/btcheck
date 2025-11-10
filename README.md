@@ -38,6 +38,10 @@ O projeto é **pessoal e em constante aprimoramento**, atualmente em processo de
 | 28/10 | Organização geral do projeto e revisão de documentação |
 | 29/10 | Remoção de imagens das notícias (tratamento mais limpo) |
 | 29/10 | Remoção temporária da aba “Notícias Anteriores” (preparação para rolagem infinita) |
+| 04/11 | Implementação do índice de medo e ganância (Fear & Greed) via API Alternative.me |
+| 10/11 | Reestruturação do bloco de cotação com botão “Cotações anteriores” integrado à API pública da Binance |
+| 10/11 | Implementação do painel de métricas (Google Analytics) |
+| 10/11 | Estruturação dos casos de teste automatizados (Robot Framework e Cypress) — [Acessar repositório](https://github.com/guibim/btcheck-tests) |
 
 ---
 
@@ -46,22 +50,17 @@ O projeto é **pessoal e em constante aprimoramento**, atualmente em processo de
 **Backend:** Python · FastAPI · PostgreSQL (NeonDB)  
 **Frontend:** React · TypeScript · TailwindCSS · ShadCN/UI  
 **Automação:** GitHub Actions  
-**APIs:** CoinGecko · Binance · RSS Feeds (Exame Cripto, Livecoins, etc.)  
+**APIs:** CoinGecko · Binance · Alternative.me · RSS Feeds (Exame Cripto, Livecoins, etc.)  
 **Infraestrutura:** Lovable.app Hosting
 
 ---
 
 ## 💡 Melhorias em Desenvolvimento
 
-- [ ] Reestruturação do **bloco de cotação**, com botão “Cotações anteriores” integrando API pública da **Binance**.  
-- [ ] **Newsletter semanal automática**, disparada por e-mail com resumo das 20 principais notícias do dia.  
+- [ ] **Newsletter semanal automática**, com envio por e-mail contendo as 20 principais notícias do dia.  
 - [ ] **Documentação pública** completa do projeto.  
 - [ ] Implementação de um **sistema CRUD** para estruturação futura de dados.  
-- [ ] Tratamento de dados no banco para evitar limite de armazenamento.  
-- [ ] Criação de **painel de métricas e estatísticas de uso** (acessos, consumo da API, etc.).  
-- [ ] Estruturação dos **casos de teste automatizados** (Robot Framework e Cypress).  
-  - Repositório dedicado para **E2E tests**.  
-  - Repositório dedicado para **API e DB tests**.
+- [ ] Tratamento e compressão de dados no banco para evitar limite de armazenamento.
 
 ---
 

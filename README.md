@@ -1,4 +1,4 @@
-# 📰 BTCheck — Bitcoin News & Price Feed
+# 📰 BTCheck — Bitcoin News & Price Feed 1.0
 
 **PT-BR:** Projeto pessoal open-source desenvolvido para **facilitar o acesso a informações atualizadas sobre o Bitcoin**, reunindo automaticamente as principais notícias diárias, exibindo a cotação em tempo real e oferecendo um conversor de moedas FIAT ⇄ BTC.  
 **EN:** Open-source personal project that automatically aggregates daily **Bitcoin news (PT-BR)**, shows live BTC/USD and BTC/BRL prices, and includes a simple fiat-to-Bitcoin converter.
@@ -21,7 +21,7 @@ O projeto é **pessoal e em constante aprimoramento**, atualmente em processo de
 - **`scrape.py`** → coleta notícias de fontes RSS e salva no banco de dados.  
 - **`get_btc_price.py`** → obtém a cotação do Bitcoin em USD e BRL via API CoinGecko.  
 - **`build_json.py`** → gera o arquivo `news.json`, utilizado pelo front-end (reutilizável em outros projetos).  
-- **`api_by_date/`** → API própria para consultar notícias de dias anteriores e obter cotações históricas via API Binance.
+- **`api_by_date/`** → API própria para consultar notícias de dias anteriores e obter cotações históricas via API Binance. > Desativada em 03/12/25 
 
 ---
 
@@ -29,19 +29,22 @@ O projeto é **pessoal e em constante aprimoramento**, atualmente em processo de
 
 | Data  | Atualização |
 |-------|--------------|
-| 27/10 | Aba “Apoie o Projeto” com sistema de doação via Lightning Network |
-| 27/10 | Créditos adicionados no rodapé |
-| 27/10 | Conversor BTC ⇄ USD / BRL na seção de cotação |
-| 27/10 | Ajuste de chamadas da API CoinGecko (30/dia distribuídas em 24h) |
-| 28/10 | Histórico de notícias por data (API `/by-date`) |
-| 28/10 | Remoção da fonte InfoMoney Cripto; manutenção da Exame Cripto |
-| 28/10 | Organização geral do projeto e revisão de documentação |
-| 29/10 | Remoção de imagens das notícias (tratamento mais limpo) |
-| 29/10 | Remoção temporária da aba “Notícias Anteriores” (preparação para rolagem infinita) |
-| 04/11 | Implementação do índice de medo e ganância (Fear & Greed) via API Alternative.me |
-| 10/11 | Reestruturação do bloco de cotação com botão “Cotações anteriores” integrado à API pública da Binance |
-| 10/11 | Implementação do painel de métricas (Google Analytics) |
-| 10/11 | Estruturação dos casos de teste automatizados (Robot Framework e Cypress) — [Acessar repositório](https://github.com/guibim/btcheck-tests) |
+| 27/10/25 | Aba “Apoie o Projeto” com sistema de doação via Lightning Network |
+| 27/10/25 | Créditos adicionados no rodapé |
+| 27/10/25 | Conversor BTC ⇄ USD / BRL na seção de cotação |
+| 27/10/25 | Ajuste de chamadas da API CoinGecko (30/dia distribuídas em 24h) |
+| 28/10/25 | Histórico de notícias por data (API /by-date) | > Desativada em 03/12/25 
+| 28/10/25 | Remoção da fonte InfoMoney Cripto; manutenção da Exame Cripto |
+| 28/10/25 | Organização geral do projeto e revisão de documentação |
+| 29/10/25 | Remoção de imagens das notícias (tratamento mais limpo) |
+| 29/10/25 | Remoção temporária da aba “Notícias Anteriores” (preparação para rolagem infinita) |
+| 04/11/25 | Implementação do índice de medo e ganância (Fear & Greed) via API Alternative.me |
+| 10/11/25 | Reestruturação do bloco de cotação com botão “Cotações anteriores” integrado à API pública da Binance |
+| 10/11/25 | Implementação do painel de métricas (Google Analytics) |
+| 10/11/25 | Estruturação dos casos de teste automatizados (Robot Framework e Cypress) — [Acessar repositório](https://github.com/guibim/btcheck-tests) |
+| 19/11/25 | **Novo endereço do site:** [btcheck-site](https://guibim.github.io/btcheck-site/) |
+| 03/12/25 | Tratamento de Banco de Dados concluído |
+| 03/12/25 | Documentação concluída v1.0 |
 
 ---
 
@@ -55,13 +58,11 @@ O projeto é **pessoal e em constante aprimoramento**, atualmente em processo de
 
 ---
 
-## 💡 Melhorias em Desenvolvimento
+## 🚧 Funcionalidades a Implementar
 
-- [ ] **Newsletter semanal automática**, com envio por e-mail contendo as 20 principais notícias do dia.  
-- [ ] **Documentação pública** completa do projeto.  
-- [ ] Implementação de um **sistema CRUD** para estruturação futura de dados.  
-- [ ] Tratamento e compressão de dados no banco para evitar limite de armazenamento.
-
+| Status | Atualização |
+|--------|-------------|
+| 🔄 | Newsletter e sistema de cadastro de usuários — *Ainda será implementado* |
 ---
 
 ## 👨‍💻 Desenvolvido por
@@ -69,4 +70,4 @@ O projeto é **pessoal e em constante aprimoramento**, atualmente em processo de
 **Guilherme Bim**  
 [github.com/guibim](https://github.com/guibim)  
 
-**Site:** [btccheck.lovable.app](https://btccheck.lovable.app) — em processo de migração para novo host
+**Site:** [btcheck-site](https://guibim.github.io/btcheck-site/)

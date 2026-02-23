@@ -37,8 +37,8 @@ QUERY = """
             'YYYY-MM-DD'  
         ) AS published_date
     FROM articles
-    ORDER BY published_at DESC
-    LIMIT %s
+  ORDER BY relevance_score DESC, published_at DESC
+ LIMIT %s
 """
 
 def main():
@@ -59,5 +59,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 

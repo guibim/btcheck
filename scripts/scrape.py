@@ -10,18 +10,26 @@ import feedparser
 from bs4 import BeautifulSoup
 import psycopg
 
+
 # ===================== Configurações =====================
 SOURCES = [
+    # PT-BR
     {"name": "Livecoins", "url": "https://livecoins.com.br/feed/"},
     {"name": "Cointelegraph Brasil", "url": "https://br.cointelegraph.com/rss"},
     {"name": "Portal do Bitcoin", "url": "https://portaldobitcoin.uol.com.br/feed/"},
-   # {"name": "Bitcoinist", "url": "https://bitcoinist.com/feed/"}, #add 30-10-25 #disabled 04-11-25
+    {"name": "Bitcoinist", "url": "https://bitcoinist.com/feed/"},
+
+    # EN
+    {"name": "CoinDesk", "url": "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml"},
+    {"name": "Cointelegraph (EN)", "url": "https://cointelegraph.com/rss"},
+    {"name": "CryptoSlate", "url": "https://cryptoslate.com/feed/"},
+    {"name": "CryptoPotato", "url": "https://cryptopotato.com/feed/"},
+    {"name": "The Defiant", "url": "https://thedefiant.io/feed/"},
 ]
 
 RAW_DB_URL = os.environ.get("DATABASE_URL", "").strip()
 if not RAW_DB_URL:
     raise SystemExit("DATABASE_URL não definida (configure em Settings → Secrets → Actions).")
-
 
 DATABASE_URL = (
     RAW_DB_URL if "sslmode=" in RAW_DB_URL
@@ -30,6 +38,7 @@ DATABASE_URL = (
 
 MAX_DAILY = int(os.environ.get("MAX_DAILY_INSERTS", "20"))
 TZ = ZoneInfo(os.environ.get("TZ", "America/Sao_Paulo"))
+UTC = ZoneInfo("UTC")
 
 KEYWORD_WEIGHTS: dict[str, float] = {
     "bitcoin": 3.0,
@@ -45,25 +54,45 @@ KEYWORD_WEIGHTS: dict[str, float] = {
 }
 
 SOURCE_WEIGHTS: dict[str, float] = {
+    # PT-BR
     "Cointelegraph Brasil": 1.0,
     "Portal do Bitcoin": 0.8,
     "Livecoins": 0.6,
+
+    # EN
+    "CoinDesk": 1.0,
+    "Cointelegraph (EN)": 0.9,
+    "CryptoSlate": 0.8,
+    "The Defiant": 0.7,
+    "CryptoPotato": 0.6,
+
+    "Bitcoinist": 0.7,
 }
 
 RECENCY_HALFLIFE_HOURS = 36
 RECENCY_WEIGHT = 2.0
 
+
 # ===================== Funções auxiliares =====================
 def url_hash(url: str) -> str:
-    """Gera hash SHA-256 da URL para evitar duplicações."""
     return hashlib.sha256(url.strip().encode()).hexdigest()
 
+
 def clean_html(html: str | None) -> str:
-    """Remove tags HTML e deixa apenas texto limpo."""
     return BeautifulSoup(html or "", "html.parser").get_text().strip()
 
+
+def normalize_to_utc(dt: datetime) -> datetime:
+    """
+    If dt is naive (no tzinfo), assume São Paulo TZ (configurable) then convert to UTC.
+    If dt is aware, convert to UTC.
+    """
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=TZ)
+    return dt.astimezone(UTC)
+
+
 def parse_feed(name: str, url: str) -> list[dict]:
-    """Lê um feed RSS e retorna lista de notícias formatadas."""
     feed = feedparser.parse(url)
     items: list[dict] = []
 
@@ -80,15 +109,11 @@ def parse_feed(name: str, url: str) -> list[dict]:
             try:
                 published_at = dateparser.parse(published_raw)
             except Exception:
-                published_at = datetime.now()
+                published_at = datetime.now(UTC)
         else:
-            published_at = datetime.now()
+            published_at = datetime.now(UTC)
 
-        # Normaliza para UTC
-        if published_at.tzinfo is None:
-            published_at = published_at.replace(tzinfo=ZoneInfo("UTC"))
-        else:
-            published_at = published_at.astimezone(ZoneInfo("UTC"))
+        published_at = normalize_to_utc(published_at)
 
         items.append({
             "id": url_hash(link),
@@ -101,9 +126,10 @@ def parse_feed(name: str, url: str) -> list[dict]:
 
     return items
 
+
 def compute_relevance(item: dict) -> float:
-    """Calcula um score simples de relevância com base em palavras-chave, fonte e frescor."""
     base_text = f"{item.get('title', '')} {item.get('summary', '')}".lower()
+
     keyword_score = 0.0
     for kw, weight in KEYWORD_WEIGHTS.items():
         occurrences = base_text.count(kw)
@@ -116,21 +142,21 @@ def compute_relevance(item: dict) -> float:
     if isinstance(published_at, datetime):
         elapsed_hours = max(
             0.0,
-            (datetime.now(ZoneInfo("UTC")) - published_at.astimezone(ZoneInfo("UTC"))).total_seconds() / 3600,
+            (datetime.now(UTC) - published_at.astimezone(UTC)).total_seconds() / 3600,
         )
         recency_score = math.exp(-elapsed_hours / RECENCY_HALFLIFE_HOURS) * RECENCY_WEIGHT
     else:
         recency_score = 0.0
 
-    total = keyword_score + source_score + recency_score
-    return round(total, 4)
+    return round(keyword_score + source_score + recency_score, 4)
+
 
 def get_today_bounds_sao_paulo() -> tuple[datetime, datetime]:
-    """Retorna limites de início e fim do dia (fuso São Paulo), convertidos para UTC."""
     now_sp = datetime.now(TZ)
     start = now_sp.replace(hour=0, minute=0, second=0, microsecond=0)
     end = start + timedelta(days=1)
-    return (start.astimezone(ZoneInfo("UTC")), end.astimezone(ZoneInfo("UTC")))
+    return (start.astimezone(UTC), end.astimezone(UTC))
+
 
 # ===================== Execução principal =====================
 def main():
@@ -145,12 +171,10 @@ def main():
         if any(k in (it["title"] + " " + (it["summary"] or "")).lower() for k in KEYWORDS)
     ]
 
-    # Ordena por data
+    # Ordena por data (UTC)
     all_items.sort(key=lambda x: x["published_at"], reverse=True)
 
-    # Conecta no banco (owner)
     with psycopg.connect(DATABASE_URL) as conn:
-        # Cria tabela e índice se não existirem
         conn.execute("""
         CREATE TABLE IF NOT EXISTS articles (
           id TEXT PRIMARY KEY,
@@ -168,7 +192,7 @@ def main():
             "ALTER TABLE articles ADD COLUMN IF NOT EXISTS relevance_score REAL NOT NULL DEFAULT 0;"
         )
 
-        # Limite diário (baseado no dia de São Paulo)
+        # Limite diário baseado no "dia SP" pela published_at (conteúdo do dia)
         start_utc, end_utc = get_today_bounds_sao_paulo()
         cur = conn.execute(
             "SELECT COUNT(*) FROM articles WHERE published_at >= %s AND published_at < %s",
@@ -190,20 +214,20 @@ def main():
                 cur = conn.execute(f"SELECT id FROM articles WHERE id IN ({placeholders})", batch)
                 existing.update([row[0] for row in cur.fetchall()])
 
-        # Mantém apenas novos e dentro do dia corrente (TZ SP)
+        # Mantém apenas novos e dentro do dia corrente (SP -> bounds em UTC)
         candidates = [
             it for it in all_items
             if (it["id"] not in existing) and (start_utc <= it["published_at"] < end_utc)
         ]
+
         for item in candidates:
             item["relevance_score"] = compute_relevance(item)
-        to_insert = candidates[:remaining]
 
+        to_insert = candidates[:remaining]
         if not to_insert:
             print("Sem itens novos dentro do período de hoje.")
             return
 
-        # Inserção em lote
         with conn.cursor() as cur:
             cur.executemany(
                 """
@@ -216,11 +240,6 @@ def main():
 
         print(f"Inseridos {len(to_insert)} novos artigos hoje (limite diário {MAX_DAILY}).")
 
+
 if __name__ == "__main__":
     main()
-
-
-
-
-
-

@@ -26,7 +26,7 @@ DATABASE_URL = urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(qs)
 
 # Consulta: últimos N artigos ordenados por published_at (TZ São Paulo para exibição)
 QUERY = """
-    SELECT
+   SELECT
         id,
         source,
         title,
@@ -34,8 +34,8 @@ QUERY = """
         summary,
         to_char(
             published_at AT TIME ZONE 'America/Sao_Paulo',
-            'YYYY-MM-DD"T"HH24:MI:SSOF'
-        ) AS published_at
+            'YYYY-MM-DD'  
+        ) AS published_date
     FROM articles
     ORDER BY published_at DESC
     LIMIT %s
@@ -59,4 +59,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

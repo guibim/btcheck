@@ -17,7 +17,12 @@ const Newsletter = () => {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email || !API_URL) return;
+    if (!email) return;
+    if (!API_URL) {
+      setErrMsg(t("newsletter_error_generic"));
+      setStatus("error");
+      return;
+    }
     setStatus("loading");
     setErrMsg("");
 
@@ -130,7 +135,7 @@ const Newsletter = () => {
 
                 <button
                   type="submit"
-                  disabled={status === "loading" || !API_URL}
+                  disabled={status === "loading"}
                   className="w-full rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
                 >
                   {status === "loading" ? t("newsletter_submitting") : t("newsletter_submit")}

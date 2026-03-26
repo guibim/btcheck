@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Newsletter from "./pages/Newsletter";
 import Unsubscribe from "./pages/Unsubscribe";
+import Paper from "./pages/Paper";
 import Historico from "./pages/Historico";
 import FearAndGreed from "./pages/FearAndGreed";
 import NotFound from "./pages/NotFound";
@@ -21,6 +22,7 @@ const App = () => (
         <Route path="/" element={<Index />} />
         <Route path="/newsletter" element={<Newsletter />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
+        <Route path="/paper" element={<Paper />} />
         <Route path="/historico" element={<Historico />} />
         <Route path="/fear-and-greed" element={<FearAndGreed />} />
         <Route path="*" element={<NotFound />} />

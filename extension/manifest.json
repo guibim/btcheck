@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "btcheck — Bitcoin Price",
+  "version": "1.0.0",
+  "description": "Cotação BTC/USD e BTC/BRL em tempo real + conversor rápido. Real-time BTC price + quick converter.",
+  "permissions": [
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://guibim.github.io/*",
+    "https://api.alternative.me/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "btcheck — Bitcoin Price",
+    "default_icon": {
+      "16": "icons/icon16.svg",
+      "48": "icons/icon48.svg",
+      "128": "icons/icon128.svg"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.svg",
+    "48": "icons/icon48.svg",
+    "128": "icons/icon128.svg"
+  }
+}

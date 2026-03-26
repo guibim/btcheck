@@ -1,4 +1,4 @@
-import { Sun, Moon, Globe, Mail, Home } from "lucide-react";
+import { Sun, Moon, Globe, Mail, Home, FileText } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -39,6 +39,17 @@ const Header = () => {
                 title="Home"
               >
                 <Home className="h-5 w-5" />
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/paper")}
+                className="h-9 gap-1.5 px-3 text-muted-foreground hover:text-foreground flex-shrink-0"
+                title={t("paper_button")}
+              >
+                <FileText className="h-4 w-4" />
+                <span className="hidden sm:inline text-xs font-medium">{t("paper_button")}</span>
               </Button>
 
               <div className="flex-shrink-0">

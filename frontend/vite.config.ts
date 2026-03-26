@@ -1,11 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  // Caminho correto para GitHub Pages (monorepo)
+export default defineConfig(() => ({
   base: "/btcheck/",
 
   server: {
@@ -13,10 +11,7 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
 
-  plugins: [
-    react(),
-    mode === "development" && componentTagger(),
-  ].filter(Boolean),
+  plugins: [react()],
 
   resolve: {
     alias: {

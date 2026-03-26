@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>btcheck</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <span class="logo-symbol">₿</span>
+      <div>
+        <span class="logo-name">btcheck</span>
+        <span class="logo-sub" id="subtitle">Cotação Bitcoin</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btn-lang" class="btn-icon" title="Idioma / Language">🌐</button>
+      <button id="btn-refresh" class="btn-icon" title="Atualizar">↻</button>
+    </div>
+  </header>
+
+  <!-- Cotação -->
+  <section class="price-card">
+    <div class="price-row main">
+      <span class="price-label" id="label-usd">1 BTC =</span>
+      <span class="price-value" id="price-usd">—</span>
+      <span class="price-currency">USD</span>
+    </div>
+    <div class="price-row secondary">
+      <span class="price-label" id="label-brl">1 BTC =</span>
+      <span class="price-value secondary" id="price-brl">—</span>
+      <span class="price-currency secondary">BRL</span>
+    </div>
+    <div class="fear-greed-row" id="fear-greed-row">
+      <span class="fg-dot" id="fg-dot"></span>
+      <span id="fg-label">Fear & Greed</span>
+      <span class="fg-value" id="fg-value">—</span>
+    </div>
+  </section>
+
+  <!-- Conversor -->
+  <section class="converter">
+    <div class="converter-header">
+      <span id="converter-title">Conversor</span>
+    </div>
+
+    <!-- Modo -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="BRL_TO_BTC">BRL → BTC</button>
+      <button class="mode-tab" data-mode="USD_TO_BTC">USD → BTC</button>
+      <button class="mode-tab" data-mode="BTC_TO_ALL">BTC → Fiat</button>
+    </div>
+
+    <!-- Input -->
+    <div class="input-row">
+      <span class="input-prefix" id="input-prefix">R$</span>
+      <input
+        type="text"
+        id="converter-input"
+        inputmode="decimal"
+        placeholder="0"
+        autocomplete="off"
+      />
+    </div>
+
+    <!-- Resultado -->
+    <div class="results" id="results">
+      <div class="result-item" id="result-btc" style="display:none">
+        <span class="result-label">BTC</span>
+        <span class="result-value" id="val-btc">—</span>
+      </div>
+      <div class="result-item" id="result-usd" style="display:none">
+        <span class="result-label">USD</span>
+        <span class="result-value" id="val-usd">—</span>
+      </div>
+      <div class="result-item" id="result-brl-conv" style="display:none">
+        <span class="result-label">BRL</span>
+        <span class="result-value" id="val-brl">—</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <span id="updated-at" class="updated">—</span>
+    <a id="link-site" href="https://guibim.github.io/btcheck" target="_blank">btcheck.dev ↗</a>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

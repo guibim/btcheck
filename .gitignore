@@ -1,4 +1,4 @@
-# ── Senhas e segredos ────────────────────────────────────────────────────────
+# ── Secrets & environment ────────────────────────────────────────────────────
 .env
 .env.*
 *.env
@@ -6,12 +6,14 @@
 .env.production
 .env.development
 
-# ── SQL (schema local, credenciais embutidas) ────────────────────────────────
+# ── SQL (local schema, embedded credentials) ─────────────────────────────────
 *.sql
 
-# ── Documentação interna ─────────────────────────────────────────────────────
+# ── Internal docs (never push) ───────────────────────────────────────────────
 contexto.md
 memory/
+*.md
+!README.md
 
 # ── Python ───────────────────────────────────────────────────────────────────
 __pycache__/

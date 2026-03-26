@@ -111,9 +111,4 @@ All colors MUST be HSL.
   .animate-fadeIn {
     animation: fadeIn 0.6s ease-out;
   }
-
-  /* Hide Lovable badge */
-  #lovable-badge {
-    display: none !important;
-  }
 }

@@ -43,6 +43,16 @@
     </script>
   </head>
 
+  <script>
+    // SPA redirect from 404.html
+    (function() {
+      var p = window.location.search.slice(1).split('&').find(function(s){ return s.startsWith('p='); });
+      if (p) {
+        p = decodeURIComponent(p.slice(2));
+        window.history.replaceState(null, null, '/' + p);
+      }
+    })();
+  </script>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

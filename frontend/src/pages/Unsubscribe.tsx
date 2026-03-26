@@ -4,7 +4,7 @@ import { MailX, CheckCircle, AlertCircle } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useApp } from "@/contexts/AppContext";
-import { API_URL } from "@/lib/constants";
+import { API_URL, ANON_KEY } from "@/lib/constants";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -17,13 +17,16 @@ const Unsubscribe = () => {
   // Via link do e-mail (?token=xxx) → cancela automaticamente
   useEffect(() => {
     const token = searchParams.get("token");
-    if (!token || !API_URL) return;
+    if (!token) return;
 
     setStatus("loading");
     fetch(`${API_URL}/unsubscribe`, {
       method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ token }),
+      headers: {
+        "Content-Type":  "application/json",
+        "Authorization": `Bearer ${ANON_KEY}`,
+      },
+      body: JSON.stringify({ token }),
     })
       .then((r) => setStatus(r.ok ? "success" : "error"))
       .catch(() => setStatus("error"));
@@ -31,14 +34,17 @@ const Unsubscribe = () => {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email || !API_URL) return;
+    if (!email) return;
     setStatus("loading");
 
     try {
       const res = await fetch(`${API_URL}/unsubscribe`, {
         method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ email: email.trim().toLowerCase() }),
+        headers: {
+          "Content-Type":  "application/json",
+          "Authorization": `Bearer ${ANON_KEY}`,
+        },
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
       });
       setStatus(res.ok ? "success" : "error");
     } catch {
@@ -101,7 +107,7 @@ const Unsubscribe = () => {
                 </div>
                 <button
                   type="submit"
-                  disabled={!API_URL}
+                  disabled={false}
                   className="w-full rounded-lg border border-destructive/50 bg-destructive/10 px-6 py-3 font-semibold text-destructive transition hover:bg-destructive/20 disabled:opacity-60"
                 >
                   {t("unsubscribe_submit")}

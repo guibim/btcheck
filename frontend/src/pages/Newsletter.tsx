@@ -3,7 +3,7 @@ import { Mail, CheckCircle, AlertCircle, Globe } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useApp } from "@/contexts/AppContext";
-import { API_URL } from "@/lib/constants";
+import { API_URL, ANON_KEY } from "@/lib/constants";
 
 type Lang   = "pt-BR" | "en";
 type Status = "idle" | "loading" | "success" | "error";
@@ -29,8 +29,11 @@ const Newsletter = () => {
     try {
       const res = await fetch(`${API_URL}/subscribe`, {
         method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ email: email.trim().toLowerCase(), lang }),
+        headers: {
+          "Content-Type":  "application/json",
+          "Authorization": `Bearer ${ANON_KEY}`,
+        },
+        body: JSON.stringify({ email: email.trim().toLowerCase(), lang }),
       });
 
       if (res.status === 201) {

@@ -1,0 +1,2 @@
+# Este arquivo é ignorado pelo GitHub Actions pois está em uma subpasta.
+# O workflow de deploy do frontend está em .github/workflows/deploy.yml na raiz do monorepo.

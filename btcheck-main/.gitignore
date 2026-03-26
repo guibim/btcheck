@@ -1,0 +1,47 @@
+# ── Senhas e segredos ────────────────────────────────────────────────────────
+.env
+.env.*
+*.env
+.env.local
+.env.production
+.env.development
+
+# ── SQL (schema local, credenciais embutidas) ────────────────────────────────
+*.sql
+
+# ── Documentação interna ─────────────────────────────────────────────────────
+contexto.md
+memory/
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# ── Node / Frontend ──────────────────────────────────────────────────────────
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.*
+
+# ── Vite ─────────────────────────────────────────────────────────────────────
+*.local
+
+# ── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDEs ─────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo

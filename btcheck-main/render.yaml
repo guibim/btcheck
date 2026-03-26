@@ -1,0 +1,24 @@
+# Render deployment — BTCheck API
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Como usar:
+#   1. Crie uma conta em render.com
+#   2. "New" → "Blueprint" → conecte este repositório
+#   3. Render detecta este arquivo automaticamente
+#   4. Adicione a variável DATABASE_URL no dashboard do Render
+#   5. Copie a URL gerada (ex: https://btcheck-api.onrender.com)
+#      e adicione como VITE_API_URL nas GitHub Variables do repositório
+
+services:
+  - type: web
+    name: btcheck-api
+    runtime: python
+    plan: free
+    buildCommand: pip install fastapi uvicorn[standard] psycopg[binary] pydantic[email]
+    startCommand: uvicorn scripts.api:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false          # preenchido manualmente no dashboard do Render
+      - key: CORS_ALLOW_ORIGINS
+        value: "https://guibim.github.io,http://localhost:8080"

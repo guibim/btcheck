@@ -1,0 +1,61 @@
+name: Deploy Frontend to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "frontend/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build
+        run: npm run build
+        working-directory: frontend
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+
+      - name: Fetch latest news.json (carry-over)
+        run: |
+          curl -fsSL https://guibim.github.io/btcheck/news.json \
+            -o frontend/dist/news.json \
+            || echo '{"generated_at":"","count":0,"items":[]}' \
+            > frontend/dist/news.json
+
+      - name: Fetch latest btc_price.json (carry-over)
+        run: |
+          curl -fsSL https://guibim.github.io/btcheck/btc_price.json \
+            -o frontend/dist/btc_price.json \
+            || echo '{"updated_at":"","source":"coingecko","prices":{"BTC_USD":0,"BTC_BRL":0}}' \
+            > frontend/dist/btc_price.json
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist
+
+      - name: Deploy to Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

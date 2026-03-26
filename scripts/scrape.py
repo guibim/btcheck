@@ -206,7 +206,7 @@ def main():
     all_items.sort(key=lambda x: x["published_at"], reverse=True)
 
     with psycopg.connect(DATABASE_URL) as conn:
-        # Garante estrutura do banco (idempotente)
+        # Garante estrutura do banco (idempotente) — um execute por statement
         conn.execute("""
             CREATE TABLE IF NOT EXISTS articles (
                 id              TEXT PRIMARY KEY,
@@ -218,15 +218,19 @@ def main():
                 relevance_score REAL NOT NULL DEFAULT 0,
                 created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
                 lang            TEXT NOT NULL DEFAULT 'pt-BR'
-            );
-            CREATE INDEX IF NOT EXISTS idx_articles_published_at ON articles (published_at DESC);
-            CREATE INDEX IF NOT EXISTS idx_articles_lang ON articles (lang);
+            )
         """)
         conn.execute(
-            "ALTER TABLE articles ADD COLUMN IF NOT EXISTS relevance_score REAL NOT NULL DEFAULT 0;"
+            "ALTER TABLE articles ADD COLUMN IF NOT EXISTS relevance_score REAL NOT NULL DEFAULT 0"
         )
         conn.execute(
-            "ALTER TABLE articles ADD COLUMN IF NOT EXISTS lang TEXT NOT NULL DEFAULT 'pt-BR';"
+            "ALTER TABLE articles ADD COLUMN IF NOT EXISTS lang TEXT NOT NULL DEFAULT 'pt-BR'"
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_articles_published_at ON articles (published_at DESC)"
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_articles_lang ON articles (lang)"
         )
 
         # Backfill: fontes EN que já estavam no banco como 'pt-BR'

@@ -6,7 +6,7 @@
 .env.production
 .env.development
 
-# ── SQL (local schema, embedded credentials) ─────────────────────────────────
+# ── SQL (schema local, credenciais embutidas) ────────────────────────────────
 *.sql
 
 # ── Internal docs (never push) ───────────────────────────────────────────────
@@ -14,6 +14,12 @@ contexto.md
 memory/
 *.md
 !README.md
+
+# ── Supabase ─────────────────────────────────────────────────────────────────
+.supabase/
+supabase/.temp/
+supabase/config.toml
+supabase/.env
 
 # ── Python ───────────────────────────────────────────────────────────────────
 __pycache__/
@@ -38,12 +44,27 @@ frontend/.env.*
 # ── Vite ─────────────────────────────────────────────────────────────────────
 *.local
 
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+npm-debug.log*
+
+# ── Certificados e chaves ────────────────────────────────────────────────────
+*.pem
+*.key
+*.cert
+*.p12
+*.pfx
+
 # ── OS ───────────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # ── IDEs ─────────────────────────────────────────────────────────────────────
 .vscode/
 .idea/
 *.swp
 *.swo
+*.suo
+*.user

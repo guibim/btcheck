@@ -15,7 +15,7 @@ import resend
 # ===== Config =====
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
 SITE_URL       = "https://guibim.github.io/btcheck"
-FROM_EMAIL     = "btcheck <newsletter@btcheck.dev>"   # domínio verificado no Resend
+FROM_EMAIL     = "btcheck <onboarding@resend.dev>"   # TODO: trocar para newsletter@newsletter-btcheck.com após verificar domínio no Resend
 NEWS_LIMIT     = int(os.environ.get("NEWS_LIMIT", "10"))
 
 for var, val in [

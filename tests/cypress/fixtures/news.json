@@ -1,0 +1,67 @@
+{
+  "generated_at": "2026-03-28T12:00:00Z",
+  "pt": {
+    "count": 3,
+    "items": [
+      {
+        "id": "abc1",
+        "source": "Livecoins",
+        "lang": "pt-BR",
+        "title": "Bitcoin atinge nova máxima histórica acima de R$ 500 mil",
+        "url": "https://livecoins.com.br/bitcoin-maxima",
+        "summary": "O Bitcoin superou a marca de R$ 500 mil pela primeira vez na história do mercado brasileiro.",
+        "published_date": "2026-03-28"
+      },
+      {
+        "id": "abc2",
+        "source": "Portal do Bitcoin",
+        "lang": "pt-BR",
+        "title": "Halving do Bitcoin: o que esperar para os próximos meses",
+        "url": "https://portaldobitcoin.uol.com.br/halving",
+        "summary": "Especialistas analisam o impacto do halving no preço do BTC e nas mineradoras.",
+        "published_date": "2026-03-28"
+      },
+      {
+        "id": "abc3",
+        "source": "Cointelegraph Brasil",
+        "lang": "pt-BR",
+        "title": "ETF de Bitcoin registra recorde de entradas em março",
+        "url": "https://br.cointelegraph.com/etf-bitcoin",
+        "summary": "Fundos de Bitcoin nos EUA registram volume recorde no primeiro trimestre de 2026.",
+        "published_date": "2026-03-27"
+      }
+    ]
+  },
+  "en": {
+    "count": 3,
+    "items": [
+      {
+        "id": "def1",
+        "source": "CoinDesk",
+        "lang": "en",
+        "title": "Bitcoin Reaches New All-Time High Above $100,000",
+        "url": "https://coindesk.com/bitcoin-ath",
+        "summary": "Bitcoin surpassed the $100,000 mark for the first time, driven by institutional demand.",
+        "published_date": "2026-03-28"
+      },
+      {
+        "id": "def2",
+        "source": "Bitcoin Magazine",
+        "lang": "en",
+        "title": "Lightning Network Adoption Surges in Q1 2026",
+        "url": "https://bitcoinmagazine.com/lightning",
+        "summary": "The Lightning Network sees record growth in transaction volume and node count.",
+        "published_date": "2026-03-28"
+      },
+      {
+        "id": "def3",
+        "source": "Decrypt",
+        "lang": "en",
+        "title": "US Government Considers Bitcoin Strategic Reserve",
+        "url": "https://decrypt.co/bitcoin-reserve",
+        "summary": "Lawmakers propose legislation to hold Bitcoin as a national strategic reserve asset.",
+        "published_date": "2026-03-27"
+      }
+    ]
+  }
+}

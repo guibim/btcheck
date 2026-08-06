@@ -36,6 +36,7 @@ RAW_DB_URL = os.environ.get("DATABASE_URL", "").strip()
 if not RAW_DB_URL:
     raise SystemExit("DATABASE_URL não definida (configure em Settings → Secrets → Actions).")
 
+# Supabase já inclui SSL na connection string; apenas garante sslmode caso ausente
 DATABASE_URL = (
     RAW_DB_URL if "sslmode=" in RAW_DB_URL
     else (RAW_DB_URL + ("&sslmode=require" if "?" in RAW_DB_URL else "?sslmode=require"))
@@ -205,9 +206,9 @@ def main():
     # Ordena por data (UTC)
     all_items.sort(key=lambda x: x["published_at"], reverse=True)
 
-    with psycopg.connect(DATABASE_URL) as conn:
-        # Garante estrutura do banco (idempotente) — um execute por statement
-        conn.execute("""
+    # DDL em autocommit separado para evitar transação abortada mascarar erros
+    with psycopg.connect(DATABASE_URL, autocommit=True) as setup:
+        setup.execute("""
             CREATE TABLE IF NOT EXISTS articles (
                 id              TEXT PRIMARY KEY,
                 source          TEXT NOT NULL,
@@ -220,28 +221,28 @@ def main():
                 lang            TEXT NOT NULL DEFAULT 'pt-BR'
             )
         """)
-        conn.execute(
+        setup.execute(
             "ALTER TABLE articles ADD COLUMN IF NOT EXISTS relevance_score REAL NOT NULL DEFAULT 0"
         )
-        conn.execute(
+        setup.execute(
             "ALTER TABLE articles ADD COLUMN IF NOT EXISTS lang TEXT NOT NULL DEFAULT 'pt-BR'"
         )
-        conn.execute(
+        setup.execute(
             "CREATE INDEX IF NOT EXISTS idx_articles_published_at ON articles (published_at DESC)"
         )
-        conn.execute(
+        setup.execute(
             "CREATE INDEX IF NOT EXISTS idx_articles_lang ON articles (lang)"
         )
-
-        # Backfill: fontes EN que já estavam no banco como 'pt-BR'
-        conn.execute("""
+        setup.execute("""
             UPDATE articles SET lang = 'en'
             WHERE source IN (
                 'CoinDesk', 'Cointelegraph (EN)', 'CryptoSlate',
                 'CryptoPotato', 'The Defiant', 'Bitcoinist',
                 'Bitcoin Magazine', 'Decrypt', 'NewsBTC'
-            ) AND lang = 'pt-BR';
+            ) AND lang = 'pt-BR'
         """)
+
+    with psycopg.connect(DATABASE_URL) as conn:
 
         start_utc, end_utc = get_today_bounds_sao_paulo()
 

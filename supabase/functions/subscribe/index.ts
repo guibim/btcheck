@@ -1,0 +1,47 @@
+import { createClient } from "jsr:@supabase/supabase-js@2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "content-type, authorization, x-client-info, apikey",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method !== "POST") return new Response("Method not allowed", { status: 405, headers: corsHeaders });
+
+  const { email, lang = "pt-BR" } = await req.json();
+
+  if (!email || !email.includes("@")) {
+    return new Response(JSON.stringify({ error: "Invalid email" }), {
+      status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  if (!["pt-BR", "en"].includes(lang)) {
+    return new Response(JSON.stringify({ error: "lang must be pt-BR or en" }), {
+      status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+
+  const token = crypto.randomUUID();
+
+  const { error } = await supabase.from("subscribers").upsert(
+    { email: email.toLowerCase().trim(), lang, token, confirmed: true },
+    { onConflict: "email", ignoreDuplicates: false },
+  );
+
+  if (error) {
+    return new Response(JSON.stringify({ error: "Database error" }), {
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  return new Response(JSON.stringify({ status: "subscribed" }), {
+    status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+});

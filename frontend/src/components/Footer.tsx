@@ -41,6 +41,18 @@ const Footer = () => {
               CoinGecko
             </a>
           </p>
+
+          <p className="text-sm text-muted-foreground">
+            Desenvolvido por{" "}
+            <a
+              href="https://skytalos.com.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Skytalos
+            </a>
+          </p>
         </div>
       </div>
     </footer>

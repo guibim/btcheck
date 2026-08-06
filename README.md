@@ -44,8 +44,8 @@ The btcheck icon (₿) will appear in your Chrome toolbar.
 ```
 btcheck/
 ├── frontend/           React + TypeScript + TailwindCSS (GitHub Pages)
-├── scripts/            Python: scraping, JSON build, newsletter, API
-├── sql/                Database schema (NeonDB / PostgreSQL)
+├── scripts/            Python: scraping, JSON build, newsletter
+├── supabase/functions/ Edge Functions: subscribe, unsubscribe
 ├── extension/          Chrome Extension (Manifest V3)
 └── .github/workflows/  GitHub Actions: scrape, build, deploy, newsletter
 ```
@@ -57,10 +57,9 @@ btcheck/
 | Layer | Stack |
 |---|---|
 | Frontend | React 18 · TypeScript · Vite · TailwindCSS · ShadCN/UI |
-| Backend scripts | Python 3.11 · FastAPI · psycopg |
-| Database | PostgreSQL — NeonDB |
+| Backend scripts | Python 3.11 · psycopg |
+| Database + API | Supabase (PostgreSQL + Edge Functions) |
 | Site hosting | GitHub Pages |
-| API hosting | Render (free tier) |
 | Email | Resend |
 | Automation | GitHub Actions |
 | External APIs | Alternative.me · RSS Feeds |
@@ -76,7 +75,7 @@ btcheck/
 - Fear & Greed Index via Alternative.me API
 - FIAT ⇄ BTC converter
 - Support section with Lightning Network donation
-- Python scraping pipeline with NeonDB (PostgreSQL)
+- Python scraping pipeline with PostgreSQL
 - GitHub Actions automation: scrape, build JSON, deploy
 - Static hosting on GitHub Pages
 
@@ -85,8 +84,9 @@ btcheck/
 - Separated news by language: PT-BR and EN feeds (14 RSS sources total)
 - Added EN language support throughout the site (PT-BR / EN toggle)
 - Light / dark theme toggle
-- Weekly newsletter system (PT-BR and EN) via Resend + NeonDB
-- Subscribe / unsubscribe API deployed on Render (FastAPI)
+- Weekly newsletter system (PT-BR and EN) via Resend
+- Subscribe / unsubscribe via Supabase Edge Functions (no external server needed)
+- Database migrated to Supabase (PostgreSQL + Edge Functions)
 - Bitcoin Whitepaper page (`/paper`) — PDF switches by active language
 - Chrome Extension (MV3): live price, Fear & Greed, quick converter
 - Updated GitHub Actions workflows: `build_news`, `build_price`, `deploy`, `newsletter`

@@ -3,7 +3,7 @@ BTCheck — API pública (subscribe / unsubscribe)
 Deploy: Render free tier  →  uvicorn scripts.api:app --host 0.0.0.0 --port $PORT
 
 Variáveis de ambiente necessárias:
-  DATABASE_URL          — conexão principal Neon (escrita)
+  DATABASE_URL          — connection string Supabase (escrita) — use a porta 5432 (direct)
   CORS_ALLOW_ORIGINS    — origens permitidas (padrão: https://guibim.github.io)
 """
 

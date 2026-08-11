@@ -20,11 +20,12 @@ jobs:
           python-version: "3.11"
 
       - name: Install deps
-        run: pip install psycopg[binary]==3.2.1 requests==2.32.3 resend supabase
+        run: pip install psycopg[binary]==3.2.1 requests==2.32.3 resend
 
       - name: Send newsletter
         env:
-          DATABASE_URL_READONLY: ${{ secrets.DATABASE_URL_READONLY }}
-          RESEND_API_KEY:        ${{ secrets.RESEND_API_KEY }}
-          NEWS_LIMIT:            ${{ env.NEWS_LIMIT }}
+          DATABASE_URL_READONLY:    ${{ secrets.DATABASE_URL_READONLY }}
+          SUBSCRIBERS_DATABASE_URL: ${{ secrets.SUBSCRIBERS_DATABASE_URL }}
+          RESEND_API_KEY:           ${{ secrets.RESEND_API_KEY }}
+          NEWS_LIMIT:               ${{ env.NEWS_LIMIT }}
         run: python scripts/send_newsletter.py

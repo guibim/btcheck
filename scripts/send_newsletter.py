@@ -1,7 +1,8 @@
 # scripts/send_newsletter.py
 # Envia o digest semanal Bitcoin para todos os subscribers confirmados.
 # Roda toda sexta-feira via GitHub Actions.
-# Fontes de dados: Neon PostgreSQL (artigos + subscribers).
+# Fontes de dados: Neon (artigos) + Supabase (subscribers — ainda escritos pelas
+# Edge Functions subscribe/unsubscribe; migrar quando esse backend for para o Neon).
 
 import os
 import textwrap
@@ -19,21 +20,27 @@ FROM_EMAIL     = "btcheck <onboarding@resend.dev>"   # TODO: trocar para newslet
 NEWS_LIMIT     = int(os.environ.get("NEWS_LIMIT", "10"))
 
 for var, val in [
-    ("RESEND_API_KEY",        RESEND_API_KEY),
-    ("DATABASE_URL_READONLY", os.environ.get("DATABASE_URL_READONLY", "")),
+    ("RESEND_API_KEY",           RESEND_API_KEY),
+    ("DATABASE_URL_READONLY",    os.environ.get("DATABASE_URL_READONLY", "")),
+    ("SUBSCRIBERS_DATABASE_URL", os.environ.get("SUBSCRIBERS_DATABASE_URL", "")),
 ]:
     if not val:
         raise SystemExit(f"Variável de ambiente '{var}' não definida.")
 
 resend.api_key = RESEND_API_KEY
 
-# ── Neon ──────────────────────────────────────────────────────────────────────
-RAW = os.environ.get("DATABASE_URL_READONLY", "").strip()
-parts = urlsplit(RAW)
-qs = dict(parse_qsl(parts.query, keep_blank_values=True))
-qs.pop("channel_binding", None)
-qs["sslmode"] = "require"
-DATABASE_URL = urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(qs), parts.fragment))
+
+def _clean(raw: str) -> str:
+    parts = urlsplit(raw.strip())
+    qs = dict(parse_qsl(parts.query, keep_blank_values=True))
+    qs.pop("channel_binding", None)
+    qs["sslmode"] = "require"
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(qs), parts.fragment))
+
+
+# Artigos: Neon. Subscribers: Supabase (enquanto subscribe/unsubscribe não migra).
+ARTICLES_DATABASE_URL    = _clean(os.environ.get("DATABASE_URL_READONLY", ""))
+SUBSCRIBERS_DATABASE_URL = _clean(os.environ.get("SUBSCRIBERS_DATABASE_URL", ""))
 
 ARTICLES_QUERY = """
     SELECT
@@ -54,12 +61,12 @@ SUBSCRIBERS_QUERY = """
 
 
 def fetch_top_articles(lang: str) -> list[dict]:
-    with psycopg.connect(DATABASE_URL, row_factory=dict_row) as conn:
+    with psycopg.connect(ARTICLES_DATABASE_URL, row_factory=dict_row) as conn:
         return conn.execute(ARTICLES_QUERY, (lang, NEWS_LIMIT)).fetchall()
 
 
 def fetch_subscribers(lang: str) -> list[dict]:
-    with psycopg.connect(DATABASE_URL, row_factory=dict_row) as conn:
+    with psycopg.connect(SUBSCRIBERS_DATABASE_URL, row_factory=dict_row) as conn:
         return conn.execute(SUBSCRIBERS_QUERY, (lang,)).fetchall()
 
 

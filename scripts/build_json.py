@@ -1,5 +1,5 @@
 # scripts/build_json.py
-# Gera public/news.json a partir do Supabase (read-only)
+# Gera public/news.json a partir do Neon (read-only)
 # Estrutura de saída: { generated_at, pt: { count, items }, en: { count, items } }
 
 import os
@@ -15,7 +15,7 @@ LIMIT = int(os.environ.get("NEWS_LIMIT", "10"))
 
 RAW = (os.environ.get("DATABASE_URL_READONLY") or "").strip()
 if not RAW:
-    raise SystemExit("DATABASE_URL_READONLY não definida (adicione em Settings → Secrets → Actions).\nUse a connection string do Supabase: Settings → Database → Connection string → URI.")
+    raise SystemExit("DATABASE_URL_READONLY não definida (adicione em Settings → Secrets → Actions).\nUse a connection string do Neon (pooler): Dashboard → Connection Details → Pooled connection.")
 
 parts = urlsplit(RAW)
 qs = dict(parse_qsl(parts.query, keep_blank_values=True))

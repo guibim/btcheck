@@ -36,7 +36,7 @@ RAW_DB_URL = os.environ.get("DATABASE_URL", "").strip()
 if not RAW_DB_URL:
     raise SystemExit("DATABASE_URL não definida (configure em Settings → Secrets → Actions).")
 
-# Supabase já inclui SSL na connection string; apenas garante sslmode caso ausente
+# Neon já inclui SSL na connection string; apenas garante sslmode caso ausente
 DATABASE_URL = (
     RAW_DB_URL if "sslmode=" in RAW_DB_URL
     else (RAW_DB_URL + ("&sslmode=require" if "?" in RAW_DB_URL else "?sslmode=require"))

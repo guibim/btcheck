@@ -45,7 +45,7 @@ The btcheck icon (₿) will appear in your Chrome toolbar.
 btcheck/
 ├── frontend/           React + TypeScript + TailwindCSS (GitHub Pages)
 ├── scripts/            Python: scraping, JSON build, newsletter
-├── supabase/functions/ Edge Functions: subscribe, unsubscribe
+├── supabase/functions/ Edge Functions: subscribe, unsubscribe (subscribers DB, temporary)
 ├── extension/          Chrome Extension (Manifest V3)
 └── .github/workflows/  GitHub Actions: scrape, build, deploy, newsletter
 ```
@@ -58,7 +58,8 @@ btcheck/
 |---|---|
 | Frontend | React 18 · TypeScript · Vite · TailwindCSS · ShadCN/UI |
 | Backend scripts | Python 3.11 · psycopg |
-| Database + API | Supabase (PostgreSQL + Edge Functions) |
+| Database (articles/news) | Neon (PostgreSQL) |
+| Database + API (newsletter) | Supabase (PostgreSQL + Edge Functions) — temporary, pending migration to Neon |
 | Site hosting | GitHub Pages |
 | Email | Resend |
 | Automation | GitHub Actions |
